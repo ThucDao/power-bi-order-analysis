@@ -1,0 +1,416 @@
+table Orders
+	lineageTag: 6aef0056-7063-4768-8dfc-f9a6b4822d65
+
+	measure 'Total Revenue' = SUM(Orders[Revenue])
+		formatString: "CA$"#,##0
+		displayFolder: Base Measures
+		lineageTag: 6bbd566d-7a30-40cd-ab1f-617d9dd62869
+
+	measure 'Total Orders' = COUNTROWS(Orders)
+		formatString: #,##0
+		displayFolder: Base Measures
+		lineageTag: b3d4edb6-b5ec-4a88-83fd-182868d18ffa
+
+	measure 'Total Units Sold' = SUM(Orders[Units_Sold])
+		formatString: #,##0
+		displayFolder: Base Measures
+		lineageTag: ec10a728-0582-40a7-bdcf-d6867c0ca4fa
+
+	measure 'Avg Order Value' = DIVIDE([Total Revenue], [Total Orders])
+		formatString: "CA$"#,##0.00
+		displayFolder: Base Measures
+		lineageTag: 7437672b-4956-43c4-aaa2-ed92df70cc8a
+
+	measure 'Avg Units per Order' = DIVIDE([Total Units Sold], [Total Orders])
+		formatString: 0.0
+		displayFolder: Base Measures
+		lineageTag: 2b15ea5a-0d91-4763-91b7-29be7bc855d8
+
+	measure 'Avg Fulfillment Days' = AVERAGE(Orders[Fulfillment_Days])
+		formatString: 0.0
+		displayFolder: Base Measures
+		lineageTag: b009acd6-1c3b-4a1d-8a39-0dad9c7cada4
+
+	measure 'Total Revenue PM' = CALCULATE([Total Revenue], DATEADD('Calendar'[Date], -1, MONTH))
+		formatString: "CA$"#,##0
+		displayFolder: MoM
+		lineageTag: b21c3748-522f-4a66-8097-65ca808eac77
+
+	measure 'Total Orders PM' = CALCULATE([Total Orders], DATEADD('Calendar'[Date], -1, MONTH))
+		formatString: #,##0
+		displayFolder: MoM
+		lineageTag: 898e35b9-22cc-48fa-9dff-435d8a6e5bed
+
+	measure 'Total Units Sold PM' = CALCULATE([Total Units Sold], DATEADD('Calendar'[Date], -1, MONTH))
+		formatString: #,##0
+		displayFolder: MoM
+		lineageTag: 45b54e20-ff35-4185-a11e-11a85d46d15a
+
+	measure 'Avg Order Value PM' = CALCULATE([Avg Order Value], DATEADD('Calendar'[Date], -1, MONTH))
+		formatString: "CA$"#,##0.00
+		displayFolder: MoM
+		lineageTag: 30d556f5-0a42-4a80-aa60-61875b3612f0
+
+	measure 'Avg Units per Order PM' = CALCULATE([Avg Units per Order], DATEADD('Calendar'[Date], -1, MONTH))
+		formatString: 0.0
+		displayFolder: MoM
+		lineageTag: 994e78ad-5529-49f9-8b66-d8898dc3375a
+
+	measure 'Avg Fulfillment Days PM' = CALCULATE([Avg Fulfillment Days], DATEADD('Calendar'[Date], -1, MONTH))
+		formatString: 0.0
+		displayFolder: MoM
+		lineageTag: 9a3283b0-0551-4983-aca6-15b771d0e8c6
+
+	measure 'Total Revenue MoM %' = DIVIDE([Total Revenue] - [Total Revenue PM], [Total Revenue PM])
+		formatString: ▲0.0%;▼0.0%;0.0%
+		displayFolder: MoM
+		lineageTag: 77a18741-2352-4160-bb96-f23cf54e75aa
+
+	measure 'Total Orders MoM %' = DIVIDE([Total Orders] - [Total Orders PM], [Total Orders PM])
+		formatString: ▲0.0%;▼0.0%;0.0%
+		displayFolder: MoM
+		lineageTag: 1be69c65-e395-401b-9e4f-475f2cafc845
+
+	measure 'Total Units Sold MoM %' = DIVIDE([Total Units Sold] - [Total Units Sold PM], [Total Units Sold PM])
+		formatString: ▲0.0%;▼0.0%;0.0%
+		displayFolder: MoM
+		lineageTag: e16584a6-bec5-4edb-a164-74fe5e9c3ce5
+
+	measure 'Avg Order Value MoM %' = DIVIDE([Avg Order Value] - [Avg Order Value PM], [Avg Order Value PM])
+		formatString: ▲0.0%;▼0.0%;0.0%
+		displayFolder: MoM
+		lineageTag: 40eec9c6-d705-428f-a7e1-667df0d4d091
+
+	measure 'Avg Units per Order MoM %' = DIVIDE([Avg Units per Order] - [Avg Units per Order PM], [Avg Units per Order PM])
+		formatString: ▲0.0%;▼0.0%;0.0%
+		displayFolder: MoM
+		lineageTag: 51195aed-b84d-4d60-af1d-68fef8b1fc01
+
+	measure 'Avg Fulfillment Days MoM %' = DIVIDE([Avg Fulfillment Days] - [Avg Fulfillment Days PM], [Avg Fulfillment Days PM])
+		formatString: ▲0.0%;▼0.0%;0.0%
+		displayFolder: MoM
+		lineageTag: 4848c28b-66ae-477c-bf61-4ef79343c76d
+
+	measure 'Pct of Total Orders' = DIVIDE([Total Orders], CALCULATE([Total Orders], ALL(Orders)))
+		formatString: 0.0%
+		displayFolder: Base Measures
+		lineageTag: d4110af7-59c2-4868-82ce-79d39078e52a
+
+	measure 'Top Payment Type' =
+			VAR Summary = ADDCOLUMNS(VALUES(Orders[Payment_Type]), "cnt", CALCULATE(COUNTROWS(Orders)))
+			VAR TopRow = TOPN(1, Summary, [cnt], DESC)
+			RETURN MAXX(TopRow, Orders[Payment_Type])
+		displayFolder: Base Measures
+		lineageTag: afdbc609-c76f-4c3d-9fac-38b43ab5004d
+
+	measure 'Total Revenue MoM Label' = FORMAT([Total Revenue MoM %], "▲0.0%;▼0.0%;0.0%") & " vs last month"
+		displayFolder: MoM
+		lineageTag: 339582f9-0690-4ade-bed4-525df01311d6
+
+	measure 'Total Orders MoM Label' = FORMAT([Total Orders MoM %], "▲0.0%;▼0.0%;0.0%") & " vs last month"
+		displayFolder: MoM
+		lineageTag: cf8eda5c-43a8-4fb7-addf-a026ecf6fe9b
+
+	measure 'Total Units Sold MoM Label' = FORMAT([Total Units Sold MoM %], "▲0.0%;▼0.0%;0.0%") & " vs last month"
+		displayFolder: MoM
+		lineageTag: d4722412-0812-4956-9b88-ee2d56054929
+
+	measure 'Avg Order Value MoM Label' = FORMAT([Avg Order Value MoM %], "▲0.0%;▼0.0%;0.0%") & " vs last month"
+		displayFolder: MoM
+		lineageTag: 1911bd01-86b4-465d-890d-82b6626f2733
+
+	measure 'Avg Units per Order MoM Label' = FORMAT([Avg Units per Order MoM %], "▲0.0%;▼0.0%;0.0%") & " vs last month"
+		displayFolder: MoM
+		lineageTag: 349d4baa-66f5-4304-8a63-644d8b42dd74
+
+	measure 'Avg Fulfillment Days MoM Label' = FORMAT([Avg Fulfillment Days MoM %], "▲0.0%;▼0.0%;0.0%") & " vs last month"
+		displayFolder: MoM
+		lineageTag: 66317fb8-b6b2-43d7-be40-f3d50e493196
+
+	measure 'Total Revenue Trend' =
+			VAR SelYear = SELECTEDVALUE(Calendar[Year])
+			VAR SelMonthNum = SELECTEDVALUE(Calendar[MonthNumber])
+			VAR FallbackDate = CALCULATE(MAX(Calendar[Date]), ALL(Calendar))
+			VAR SelectedDate = IF(NOT ISBLANK(SelYear) && NOT ISBLANK(SelMonthNum), DATE(SelYear, SelMonthNum, 1), DATE(YEAR(FallbackDate), MONTH(FallbackDate), 1))
+			VAR Offset = SELECTEDVALUE(TrendMonths[Offset])
+			VAR TargetDate = EDATE(SelectedDate, Offset)
+			RETURN CALCULATE([Total Revenue], REMOVEFILTERS(Calendar), Calendar[Year] = YEAR(TargetDate), Calendar[MonthNumber] = MONTH(TargetDate))
+		displayFolder: Trend
+		lineageTag: 667e92e6-4a71-4d15-86da-3e87d937957e
+
+	measure 'Total Orders Trend' =
+			VAR SelYear = SELECTEDVALUE(Calendar[Year])
+			VAR SelMonthNum = SELECTEDVALUE(Calendar[MonthNumber])
+			VAR FallbackDate = CALCULATE(MAX(Calendar[Date]), ALL(Calendar))
+			VAR SelectedDate = IF(NOT ISBLANK(SelYear) && NOT ISBLANK(SelMonthNum), DATE(SelYear, SelMonthNum, 1), DATE(YEAR(FallbackDate), MONTH(FallbackDate), 1))
+			VAR Offset = SELECTEDVALUE(TrendMonths[Offset])
+			VAR TargetDate = EDATE(SelectedDate, Offset)
+			RETURN CALCULATE([Total Orders], REMOVEFILTERS(Calendar), Calendar[Year] = YEAR(TargetDate), Calendar[MonthNumber] = MONTH(TargetDate))
+		displayFolder: Trend
+		lineageTag: 8e0638ca-b9b4-4fb4-a089-2c942f636d28
+
+	measure 'Total Units Sold Trend' =
+			VAR SelYear = SELECTEDVALUE(Calendar[Year])
+			VAR SelMonthNum = SELECTEDVALUE(Calendar[MonthNumber])
+			VAR FallbackDate = CALCULATE(MAX(Calendar[Date]), ALL(Calendar))
+			VAR SelectedDate = IF(NOT ISBLANK(SelYear) && NOT ISBLANK(SelMonthNum), DATE(SelYear, SelMonthNum, 1), DATE(YEAR(FallbackDate), MONTH(FallbackDate), 1))
+			VAR Offset = SELECTEDVALUE(TrendMonths[Offset])
+			VAR TargetDate = EDATE(SelectedDate, Offset)
+			RETURN CALCULATE([Total Units Sold], REMOVEFILTERS(Calendar), Calendar[Year] = YEAR(TargetDate), Calendar[MonthNumber] = MONTH(TargetDate))
+		displayFolder: Trend
+		lineageTag: a46b6185-f25d-4558-bb0e-937351ed48b7
+
+	measure 'Avg Order Value Trend' =
+			VAR SelYear = SELECTEDVALUE(Calendar[Year])
+			VAR SelMonthNum = SELECTEDVALUE(Calendar[MonthNumber])
+			VAR FallbackDate = CALCULATE(MAX(Calendar[Date]), ALL(Calendar))
+			VAR SelectedDate = IF(NOT ISBLANK(SelYear) && NOT ISBLANK(SelMonthNum), DATE(SelYear, SelMonthNum, 1), DATE(YEAR(FallbackDate), MONTH(FallbackDate), 1))
+			VAR Offset = SELECTEDVALUE(TrendMonths[Offset])
+			VAR TargetDate = EDATE(SelectedDate, Offset)
+			RETURN CALCULATE([Avg Order Value], REMOVEFILTERS(Calendar), Calendar[Year] = YEAR(TargetDate), Calendar[MonthNumber] = MONTH(TargetDate))
+		displayFolder: Trend
+		lineageTag: 0739f126-efba-4d85-913c-f53c78f9efe4
+
+	measure 'Avg Units per Order Trend' =
+			VAR SelYear = SELECTEDVALUE(Calendar[Year])
+			VAR SelMonthNum = SELECTEDVALUE(Calendar[MonthNumber])
+			VAR FallbackDate = CALCULATE(MAX(Calendar[Date]), ALL(Calendar))
+			VAR SelectedDate = IF(NOT ISBLANK(SelYear) && NOT ISBLANK(SelMonthNum), DATE(SelYear, SelMonthNum, 1), DATE(YEAR(FallbackDate), MONTH(FallbackDate), 1))
+			VAR Offset = SELECTEDVALUE(TrendMonths[Offset])
+			VAR TargetDate = EDATE(SelectedDate, Offset)
+			RETURN CALCULATE([Avg Units per Order], REMOVEFILTERS(Calendar), Calendar[Year] = YEAR(TargetDate), Calendar[MonthNumber] = MONTH(TargetDate))
+		displayFolder: Trend
+		lineageTag: 6e6b4e7c-e090-471b-8855-7fd6bd461f6a
+
+	measure 'Avg Fulfillment Days Trend' =
+			VAR SelYear = SELECTEDVALUE(Calendar[Year])
+			VAR SelMonthNum = SELECTEDVALUE(Calendar[MonthNumber])
+			VAR FallbackDate = CALCULATE(MAX(Calendar[Date]), ALL(Calendar))
+			VAR SelectedDate = IF(NOT ISBLANK(SelYear) && NOT ISBLANK(SelMonthNum), DATE(SelYear, SelMonthNum, 1), DATE(YEAR(FallbackDate), MONTH(FallbackDate), 1))
+			VAR Offset = SELECTEDVALUE(TrendMonths[Offset])
+			VAR TargetDate = EDATE(SelectedDate, Offset)
+			RETURN CALCULATE([Avg Fulfillment Days], REMOVEFILTERS(Calendar), Calendar[Year] = YEAR(TargetDate), Calendar[MonthNumber] = MONTH(TargetDate))
+		displayFolder: Trend
+		lineageTag: 7e123192-008d-4719-87e2-32769f83b925
+
+	measure 'Pct of Total Revenue' = DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL(Orders)))
+		formatString: 0.0%
+		displayFolder: Base Measures
+		lineageTag: 0bee828c-aeae-4447-bccd-4ecc70924010
+
+	measure 'Customer Revenue Rank' = RANKX(ALLSELECTED(Orders[Customer_Name]), [Total Revenue], , DESC, DENSE)
+		formatString: 0
+		displayFolder: Base Measures
+		lineageTag: c963e692-cf5a-4408-8901-7a81ec7edd3f
+
+	measure 'Orders Sun' = CALCULATE([Total Orders], Orders[Order_DayName] = "Sun")
+		formatString: #,##0
+		displayFolder: Heatmap
+		lineageTag: 52f753da-9dce-42fc-b668-f7c19b5122a9
+
+	measure 'Orders Mon' = CALCULATE([Total Orders], Orders[Order_DayName] = "Mon")
+		formatString: #,##0
+		displayFolder: Heatmap
+		lineageTag: 60221ac7-80fe-4914-bd33-2ab55ee9b57d
+
+	measure 'Orders Tue' = CALCULATE([Total Orders], Orders[Order_DayName] = "Tue")
+		formatString: #,##0
+		displayFolder: Heatmap
+		lineageTag: 9a4ce9cf-bdcb-469b-8143-b1272bc471ea
+
+	measure 'Orders Wed' = CALCULATE([Total Orders], Orders[Order_DayName] = "Wed")
+		formatString: #,##0
+		displayFolder: Heatmap
+		lineageTag: 10d94b9b-feb6-455c-99ec-97c9d727f973
+
+	measure 'Orders Thu' = CALCULATE([Total Orders], Orders[Order_DayName] = "Thu")
+		formatString: #,##0
+		displayFolder: Heatmap
+		lineageTag: 76fad8bd-52ce-4789-b04b-bac1f403991f
+
+	measure 'Orders Fri' = CALCULATE([Total Orders], Orders[Order_DayName] = "Fri")
+		formatString: #,##0
+		displayFolder: Heatmap
+		lineageTag: 560dd8bd-ff30-478f-8720-7ab4e1fe9f6d
+
+	measure 'Orders Sat' = CALCULATE([Total Orders], Orders[Order_DayName] = "Sat")
+		formatString: #,##0
+		displayFolder: Heatmap
+		lineageTag: 96ee2bbe-0268-4c1a-a7c3-68e9691d5f46
+
+	measure 'Show When No Customer Selected' = IF(HASONEVALUE(Orders[Customer_Name]), 0, 1)
+		displayFolder: Heatmap
+		lineageTag: e6f7a8b9-c0d1-42e3-f405-1a2b3c4d5e6f
+
+	measure 'Day Color Format' =
+			VAR CurrentNum = [Total Orders]
+			VAR MaxNumber = CALCULATE(MAXX(VALUES(Orders[Order_DayName]), [Total Orders]), ALLSELECTED(Orders))
+			VAR MinNumber = CALCULATE(MINX(VALUES(Orders[Order_DayName]), [Total Orders]), ALLSELECTED(Orders))
+			RETURN SWITCH(TRUE(), CurrentNum = MaxNumber, "#1E8E3E", CurrentNum = MinNumber, "#D93025", "#E69F00")
+		displayFolder: Heatmap
+		lineageTag: f7a8b9c0-d1e2-43f4-0516-2b3c4d5e6f7a
+
+	measure 'Hour Color Format' =
+			VAR CurrentNum = [Total Orders]
+			VAR MaxNumber = CALCULATE(MAXX(VALUES(Orders[Order_HourLabel]), [Total Orders]), ALLSELECTED(Orders))
+			VAR MinNumber = CALCULATE(MINX(VALUES(Orders[Order_HourLabel]), [Total Orders]), ALLSELECTED(Orders))
+			RETURN SWITCH(TRUE(), CurrentNum = MaxNumber, "#1E8E3E", CurrentNum = MinNumber, "#D93025", "#E69F00")
+		displayFolder: Heatmap
+		lineageTag: 08b9c0d1-e2f3-44a5-1627-3c4d5e6f7a8b
+
+	measure 'Heatmap Grid Max' = CALCULATE(MAXX(VALUES(Orders[Order_HourLabel]), MAX(MAX(MAX(MAX(MAX(MAX([Orders Sun], [Orders Mon]), [Orders Tue]), [Orders Wed]), [Orders Thu]), [Orders Fri]), [Orders Sat])), ALLSELECTED(Orders))
+		displayFolder: Heatmap
+		lineageTag: 19c0d1e2-f3a4-45b6-2738-4d5e6f7a8b9c
+
+	measure 'Orders Sun Font Format' = IF([Orders Sun] = [Heatmap Grid Max], "#FFFFFF", "#333333")
+		displayFolder: Heatmap
+		lineageTag: 2ad1e2f3-a4b5-46c7-3849-5e6f7a8b9c0d
+
+	measure 'Orders Mon Font Format' = IF([Orders Mon] = [Heatmap Grid Max], "#FFFFFF", "#333333")
+		displayFolder: Heatmap
+		lineageTag: 3be2f3a4-b5c6-47d8-495a-6f7a8b9c0d1e
+
+	measure 'Orders Tue Font Format' = IF([Orders Tue] = [Heatmap Grid Max], "#FFFFFF", "#333333")
+		displayFolder: Heatmap
+		lineageTag: 4cf3a4b5-c6d7-48e9-5a6b-7a8b9c0d1e2f
+
+	measure 'Orders Wed Font Format' = IF([Orders Wed] = [Heatmap Grid Max], "#FFFFFF", "#333333")
+		displayFolder: Heatmap
+		lineageTag: 5d04b5c6-d7e8-49fa-6b7c-8b9c0d1e2f3a
+
+	measure 'Orders Thu Font Format' = IF([Orders Thu] = [Heatmap Grid Max], "#FFFFFF", "#333333")
+		displayFolder: Heatmap
+		lineageTag: 6e15c6d7-e8f9-40ab-7c8d-9c0d1e2f3a4b
+
+	measure 'Orders Fri Font Format' = IF([Orders Fri] = [Heatmap Grid Max], "#FFFFFF", "#333333")
+		displayFolder: Heatmap
+		lineageTag: 7f26d7e8-f900-41bc-8d9e-0d1e2f3a4b5c
+
+	measure 'Orders Sat Font Format' = IF([Orders Sat] = [Heatmap Grid Max], "#FFFFFF", "#333333")
+		displayFolder: Heatmap
+		lineageTag: 8037e8f9-0011-42cd-9e0f-1e2f3a4b5c6d
+
+	column Order_ID
+		dataType: string
+		isHidden
+		lineageTag: e53ae9a1-6305-4711-b36c-36e4236c2251
+		summarizeBy: none
+		sourceColumn: Order_ID
+
+	column Order_Date
+		dataType: dateTime
+		isHidden
+		formatString: Short Date
+		lineageTag: 1dbf19d3-f2e6-49c0-b1be-4e0292e8f358
+		summarizeBy: none
+		sourceColumn: Order_Date
+
+	column Order_Time
+		dataType: dateTime
+		isHidden
+		formatString: h:mm:ss AM/PM
+		lineageTag: c7726ebf-f741-4eab-89dd-9edee893af1a
+		summarizeBy: none
+		sourceColumn: Order_Time
+
+	column Fulfillment_Date
+		dataType: dateTime
+		isHidden
+		formatString: Short Date
+		lineageTag: 30d807b5-b77a-4497-97c4-222f0eeca9b6
+		summarizeBy: none
+		sourceColumn: Fulfillment_Date
+
+	column Fulfillment_Method
+		dataType: string
+		lineageTag: 76f6ef85-8f36-458e-9e89-d3dda7d48927
+		summarizeBy: none
+		sourceColumn: Fulfillment_Method
+
+	column Customer_Postal_Code
+		dataType: string
+		lineageTag: 07dd1abf-6684-4dbb-b297-ff9ac748d3c7
+		dataCategory: Address
+		summarizeBy: none
+		sourceColumn: Customer_Postal_Code
+
+	column Revenue
+		dataType: decimal
+		formatString: "CA$"#,##0.00
+		lineageTag: 63e1c84e-a552-4951-b42e-f78a1b63bef4
+		summarizeBy: sum
+		sourceColumn: Revenue
+
+	column Units_Sold
+		dataType: int64
+		formatString: #,##0
+		lineageTag: 5bc79498-d40c-4eec-be59-b3e218e56f7a
+		summarizeBy: sum
+		sourceColumn: Units_Sold
+
+	column Payment_Type
+		dataType: string
+		lineageTag: cbdc70f5-0807-4230-b8e4-c37af941e2ff
+		summarizeBy: none
+		sourceColumn: Payment_Type
+
+	column Fulfillment_Days = (Orders[Fulfillment_Date] + Orders[Fulfillment_Time]) - (Orders[Order_Date] + Orders[Order_Time])
+		dataType: decimal
+		formatString: 0.00
+		lineageTag: 28cdea9e-13b3-4818-b890-bfa708ab9ad9
+		summarizeBy: none
+
+	column Order_DayOfWeekNum = WEEKDAY('Orders'[Order_Date], 1)
+		dataType: int64
+		isHidden
+		lineageTag: 2d2e9933-7713-47dd-b049-60482c67d4da
+		summarizeBy: none
+
+	column Order_DayName = FORMAT('Orders'[Order_Date], "ddd")
+		dataType: string
+		lineageTag: 180df695-ae2a-4499-8dcf-ba9251a7793e
+		summarizeBy: none
+		sortByColumn: Order_DayOfWeekNum
+
+	column Order_HourLabel = FORMAT(TIME(Orders[Order_HourNum], 0, 0), "hh:mm AM/PM")
+		dataType: string
+		lineageTag: ff14853b-2fd4-41ca-acf6-9219e0bd93d0
+		summarizeBy: none
+		sortByColumn: Order_HourNum
+
+	column Customer_FSA = LEFT('Orders'[Customer_Postal_Code], 3)
+		dataType: string
+		lineageTag: 1843e60d-dff6-408d-8a14-b4fc38772a71
+		summarizeBy: none
+
+	column Fulfillment_Time
+		dataType: dateTime
+		isHidden
+		formatString: h:mm:ss AM/PM
+		lineageTag: 37acab89-f540-4322-baee-b3cf59e8d677
+		summarizeBy: none
+		sourceColumn: Fulfillment_Time
+
+	column Customer_Name
+		dataType: string
+		lineageTag: 30f9e904-e3ab-4dab-ad47-972cfd922bbe
+		summarizeBy: none
+		sourceColumn: Customer_Name
+
+	column Order_HourNum = HOUR(Orders[Order_Time])
+		dataType: int64
+		isHidden
+		lineageTag: a44a8b46-19c9-438e-9cfe-0a9e03f45aab
+		summarizeBy: none
+
+	partition Orders = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\GitHub\power-bi-order-analysis\press_on_nails_orders.csv"),[Delimiter=",", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Cleaned Revenue" = Table.TransformColumns(#"Promoted Headers", {{"Revenue", each Number.FromText(Text.Remove(_, {"C", "A", "$", ","}))}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Cleaned Revenue",{{"Order_ID", type text}, {"Order_Date", type date}, {"Order_Time", type time}, {"Fulfillment_Date", type date}, {"Fulfillment_Time", type time}, {"Fulfillment_Method", type text}, {"Customer_Name", type text}, {"Customer_Postal_Code", type text}, {"Units_Sold", Int64.Type}, {"Revenue", type number}, {"Payment_Type", type text}})
+				in
+				    #"Changed Type"
+

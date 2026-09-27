@@ -1,0 +1,66 @@
+table Calendar
+	lineageTag: 82a6be24-43ee-465b-8831-bb4365d06523
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isUnique
+		formatString: Short Date
+		lineageTag: c1134b38-e5ed-4668-81a6-1fc3e49cb095
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 9dbefde6-8f4f-4e84-84d6-678702b5816a
+		summarizeBy: none
+		sourceColumn: Year
+
+	column MonthNumber
+		dataType: int64
+		isHidden
+		lineageTag: 7b659178-8d71-473c-9879-08a445a62eea
+		summarizeBy: none
+		sourceColumn: MonthNumber
+
+	column MonthName
+		dataType: string
+		lineageTag: 06fad8b1-414c-4039-9ddb-b81bd67de4f3
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: MonthNumber
+
+	column YearMonth
+		dataType: string
+		lineageTag: 441179ea-4976-4548-b026-38465533a6ea
+		summarizeBy: none
+		sourceColumn: YearMonth
+		sortByColumn: YearMonthSort
+
+	column YearMonthSort
+		dataType: int64
+		isHidden
+		lineageTag: 3a878802-e00a-4bb3-9cda-bf23c6367eed
+		summarizeBy: none
+		sourceColumn: YearMonthSort
+
+	partition Calendar = m
+		mode: import
+		source =
+				let
+				    MinDate = List.Min(Orders[Order_Date]),
+				    MaxDate = List.Max(Orders[Fulfillment_Date]),
+				    StartDate = Date.StartOfMonth(MinDate),
+				    EndDate = Date.EndOfMonth(MaxDate),
+				    DateList = List.Dates(StartDate, Duration.Days(EndDate - StartDate) + 1, #duration(1,0,0,0)),
+				    #"Converted to Table" = Table.FromList(DateList, Splitter.SplitByNothing(), {"Date"}, null, ExtraValues.Error),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Converted to Table",{{"Date", type date}}),
+				    #"Added Year" = Table.AddColumn(#"Changed Type", "Year", each Date.Year([Date]), Int64.Type),
+				    #"Added MonthNumber" = Table.AddColumn(#"Added Year", "MonthNumber", each Date.Month([Date]), Int64.Type),
+				    #"Added MonthName" = Table.AddColumn(#"Added MonthNumber", "MonthName", each Date.ToText([Date], "MMM"), type text),
+				    #"Added YearMonth" = Table.AddColumn(#"Added MonthName", "YearMonth", each Date.ToText([Date], "yyyy-MMM"), type text),
+				    #"Added YearMonthSort" = Table.AddColumn(#"Added YearMonth", "YearMonthSort", each Date.Year([Date])*100 + Date.Month([Date]), Int64.Type)
+				in
+				    #"Added YearMonthSort"
+

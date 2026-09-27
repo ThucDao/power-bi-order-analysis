@@ -1,0 +1,23 @@
+table RefreshInfo
+	lineageTag: 7e1c7104-bb90-4fee-8d16-053f9eafbb25
+
+	measure 'Last Refreshed Text' = "Last refreshed: " & FORMAT(MAX(RefreshInfo[RefreshedAt]), "yyyy-mm-dd hh:mm:ss")
+		displayFolder: Base Measures
+		lineageTag: ec98019c-a845-42a1-ae56-cd4164efefa7
+
+	column RefreshedAt
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd hh:mm:ss
+		lineageTag: 8608dd0d-9b26-4859-9daf-96d7ecfefd1a
+		summarizeBy: none
+		sourceColumn: RefreshedAt
+
+	partition RefreshInfo = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [RefreshedAt = datetime], {{DateTime.LocalNow()}})
+				in
+				    Source
+

@@ -1,0 +1,37 @@
+table TrendMonths
+	lineageTag: 8dd99dd7-bac0-4022-ad6c-5f1558d9905d
+
+	measure 'Trend End Label' =
+			VAR SelYear = SELECTEDVALUE(Calendar[Year])
+			VAR SelMonthNum = SELECTEDVALUE(Calendar[MonthNumber])
+			VAR FallbackDate = CALCULATE(MAX(Calendar[Date]), ALL(Calendar))
+			VAR SelectedDate = IF(NOT ISBLANK(SelYear) && NOT ISBLANK(SelMonthNum), DATE(SelYear, SelMonthNum, 1), DATE(YEAR(FallbackDate), MONTH(FallbackDate), 1))
+			RETURN FORMAT(SelectedDate, "YYYY-MM")
+		lineageTag: fb80088b-e119-48b1-a434-32504ec00195
+
+	measure 'Trend Start Label' =
+			VAR SelYear = SELECTEDVALUE(Calendar[Year])
+			VAR SelMonthNum = SELECTEDVALUE(Calendar[MonthNumber])
+			VAR FallbackDate = CALCULATE(MAX(Calendar[Date]), ALL(Calendar))
+			VAR SelectedDate = IF(NOT ISBLANK(SelYear) && NOT ISBLANK(SelMonthNum), DATE(SelYear, SelMonthNum, 1), DATE(YEAR(FallbackDate), MONTH(FallbackDate), 1))
+			VAR EarliestDate = CALCULATE(MIN(Calendar[Date]), ALL(Calendar))
+			VAR EarliestMonthStart = DATE(YEAR(EarliestDate), MONTH(EarliestDate), 1)
+			VAR TentativeStart = EDATE(SelectedDate, -11)
+			VAR ClampedStart = IF(TentativeStart < EarliestMonthStart, EarliestMonthStart, TentativeStart)
+			RETURN FORMAT(ClampedStart, "YYYY-MM")
+		lineageTag: 43a7808e-ee43-490a-8152-8f05198fa637
+
+	column Offset
+		dataType: int64
+		lineageTag: fa33692f-0d23-4566-81fc-a74c3be5cc8e
+		summarizeBy: none
+		sourceColumn: Offset
+
+	partition TrendMonths = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [Offset = Int64.Type], List.Transform({-11..0}, each {_}))
+				in
+				    Source
+
