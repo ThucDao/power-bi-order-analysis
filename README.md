@@ -116,7 +116,7 @@ Power BI also keeps its own embedded copy of this file for each map under `Order
 <details>
 <summary><h2>How this was built</h2></summary>
 
-This dashboard was built almost entirely in conversation with [Claude Code](https://claude.com/claude-code), using the official Microsoft Power BI Authoring toolkit for live model verification and report authoring. I wrote about the process, including what the AI handled well and the two things that still needed a human, in [this LinkedIn article](https://www.linkedin.com/pulse/dashboard-ai-finished-95-alone-thuc-dao-ite3c/).
+This dashboard was built almost entirely in conversation with [Claude Code](https://claude.com/claude-code), using the official [Microsoft Power BI Report Authoring skill](https://github.com/microsoft/skills-for-fabric/tree/main/plugins/powerbi-authoring/skills) for live model verification and report authoring. I wrote about the process, including what the AI handled well and the two things that still needed a human, in [this LinkedIn article](https://www.linkedin.com/pulse/dashboard-ai-finished-95-alone-thuc-dao-ite3c/).
 
 </details>
 
